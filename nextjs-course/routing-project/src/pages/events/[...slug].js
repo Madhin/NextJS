@@ -5,6 +5,7 @@ import ResultsTitle from "@/components/events/results-title";
 import { Fragment } from "react";
 import Button from "@/components/UI/button";
 import ErrorAlert from "@/components/UI/error-alert";
+import Head from "next/head";
 // import { useSWR } from "swr";
 
 function FilteredEvents(props) {
@@ -15,19 +16,35 @@ function FilteredEvents(props) {
 
   // console.log(filterData);
 
-  if (!filterData) {
-    return <p className="center">Loading...</p>;
-  }
-
   const filteredYear = filterData[0];
   const filteredMonth = filterData[1];
 
-  // const numYear = +filteredYear;
-  // const numMonth = +filteredMonth;
+  const numYear = +filteredYear;
+  const numMonth = +filteredMonth;
+
+  const pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content={`All events for ${numMonth}/${numYear}`}
+      />
+    </Head>
+  );
+
+  if (!filterData) {
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+    );
+  }
 
   if (props.hasError) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid Filter, please adjust values!</p>
         </ErrorAlert>
@@ -43,6 +60,7 @@ function FilteredEvents(props) {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter</p>
         </ErrorAlert>
@@ -56,6 +74,7 @@ function FilteredEvents(props) {
   const date = new Date(props.date.year, props.date.month - 1);
   return (
     <Fragment>
+      {pageHeadData}
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
